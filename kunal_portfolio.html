@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Kunal Gadhave – Mechatronics Engineer</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Exo+2:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#03050f;--bg2:#06091a;
+  --cyan:#00d4ff;--cyan2:#0099bb;--cyan3:#00ffee;
+  --green:#00ff88;
+  --text:#c8d8e8;--muted:#4a6a8a;
+  --card:rgba(8,16,34,0.9);--border:rgba(0,212,255,0.18);
+  --glow:0 0 24px rgba(0,212,255,0.35);
+  --glow2:0 0 40px rgba(0,212,255,0.18);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;overflow-x:hidden;cursor:none;}
+ 
+#cursor{position:fixed;width:10px;height:10px;background:var(--cyan);border-radius:50%;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);mix-blend-mode:screen;transition:transform .1s;}
+#cursor-ring{position:fixed;width:32px;height:32px;border:1px solid rgba(0,212,255,0.5);border-radius:50%;pointer-events:none;z-index:99998;transform:translate(-50%,-50%);transition:transform .18s ease,width .2s,height .2s;}
+ 
+/* ─── PRELOADER ─── */
+#preloader{
+  position:fixed;inset:0;z-index:9999;
+  background:#000;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  transition:opacity .8s ease,visibility .8s ease;
+}
+#preloader.fade-out{opacity:0;visibility:hidden;}
+#star-canvas{position:absolute;inset:0;z-index:0;}
+.preloader-inner{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:26px;}
+ 
+.orbital-wrap{position:relative;width:180px;height:180px;}
+.orbit-ring{position:absolute;top:50%;left:50%;border-radius:50%;border:1.5px solid transparent;transform:translate(-50%,-50%);animation:spinRing 3s linear infinite;}
+.orbit-ring:nth-child(1){width:180px;height:180px;border-color:rgba(0,212,255,0.6);animation-duration:4s;}
+.orbit-ring:nth-child(2){width:130px;height:130px;border-color:rgba(0,255,136,0.5);animation-duration:2.8s;animation-direction:reverse;}
+.orbit-ring:nth-child(3){width:82px;height:82px;border-color:rgba(0,200,255,0.7);animation-duration:2s;}
+.orbit-dot{position:absolute;width:7px;height:7px;border-radius:50%;top:-3.5px;left:50%;transform:translateX(-50%);}
+.orbit-ring:nth-child(1) .orbit-dot{background:#00d4ff;box-shadow:0 0 14px #00d4ff;}
+.orbit-ring:nth-child(2) .orbit-dot{background:#00ff88;box-shadow:0 0 12px #00ff88;top:50%;left:-3.5px;transform:translateY(-50%);}
+.orbit-ring:nth-child(3) .orbit-dot{background:#00eeff;box-shadow:0 0 10px #00eeff;}
+.orbit-core{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:36px;height:36px;border-radius:50%;background:radial-gradient(circle,#00ffee 0%,#00a8cc 60%,transparent 100%);box-shadow:0 0 30px #00d4ff,0 0 60px rgba(0,212,255,0.4);animation:pulseCore 2s ease-in-out infinite;}
+ 
+@keyframes spinRing{to{transform:translate(-50%,-50%) rotate(360deg);}}
+@keyframes pulseCore{0%,100%{box-shadow:0 0 30px #00d4ff,0 0 60px rgba(0,212,255,0.4);}50%{box-shadow:0 0 50px #00d4ff,0 0 100px rgba(0,212,255,0.6);}}
+ 
+#boot-msg{font-family:'Share Tech Mono',monospace;font-size:.8rem;color:var(--cyan);letter-spacing:.12em;min-height:20px;text-shadow:0 0 10px var(--cyan);}
+.cursor-blink{animation:blink .7s step-end infinite;}
+@keyframes blink{50%{opacity:0;}}
+ 
+.progress-wrap{width:280px;}
+.progress-label{font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--muted);letter-spacing:.1em;margin-bottom:8px;display:flex;justify-content:space-between;}
+.progress-track{width:100%;height:4px;background:rgba(0,212,255,0.1);border-radius:2px;position:relative;overflow:visible;}
+.progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--cyan2),var(--cyan),var(--cyan3));border-radius:2px;position:relative;transition:width .12s ease;}
+.comet-head{position:absolute;right:-4px;top:50%;transform:translateY(-50%);width:10px;height:10px;border-radius:50%;background:#fff;box-shadow:0 0 12px #00d4ff,0 0 24px #00d4ff,-14px 0 20px rgba(0,212,255,0.6);}
+ 
+#enter-btn{margin-top:6px;padding:11px 36px;border:1px solid var(--cyan);background:transparent;color:var(--cyan);font-family:'Orbitron',monospace;font-size:.75rem;letter-spacing:.2em;cursor:pointer;transition:all .3s;opacity:0;pointer-events:none;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);}
+#enter-btn.visible{opacity:1;pointer-events:auto;}
+#enter-btn:hover{background:var(--cyan);color:#000;box-shadow:var(--glow);}
+ 
+/* ─── NAV ─── */
+#navbar{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:14px 40px;background:rgba(3,5,15,0.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);transform:translateY(-100%);transition:transform .6s ease;}
+#navbar.visible{transform:translateY(0);}
+.nav-logo{font-family:'Orbitron',monospace;font-size:1.1rem;font-weight:700;color:var(--cyan);letter-spacing:.15em;}
+.nav-links{display:flex;gap:24px;flex-wrap:wrap;}
+.nav-links a{font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--muted);text-decoration:none;letter-spacing:.1em;transition:color .2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--cyan);}
+ 
+/* ─── HERO ─── */
+#hero{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:80px 40px 40px;}
+#hero-canvas{position:absolute;inset:0;z-index:0;width:100%;height:100%;}
+.scanline{position:absolute;inset:0;pointer-events:none;z-index:3;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px);opacity:.35;}
+ 
+/* planet */
+.planet-wrap{position:absolute;right:4%;top:50%;transform:translateY(-50%);width:340px;height:340px;z-index:1;}
+.planet-sphere{width:220px;height:220px;border-radius:50%;background:radial-gradient(ellipse at 30% 30%,#3a6fa0 0%,#1a3a60 40%,#0a1a30 70%,#050e1e 100%);box-shadow:inset -30px -30px 60px rgba(0,0,0,0.8),inset 10px 10px 40px rgba(0,150,255,0.2),0 0 60px rgba(0,100,200,0.15);position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);animation:rotatePlanet 20s linear infinite;}
+.planet-ring{position:absolute;top:50%;left:50%;width:320px;height:80px;transform:translate(-50%,-50%) rotateX(70deg);border-radius:50%;border:18px solid transparent;border-top:18px solid rgba(100,180,255,0.22);border-bottom:18px solid rgba(60,140,220,0.12);}
+.planet-ring2{position:absolute;top:50%;left:50%;width:365px;height:92px;transform:translate(-50%,-50%) rotateX(70deg);border-radius:50%;border:7px solid rgba(80,160,240,0.1);}
+@keyframes rotatePlanet{to{transform:translate(-50%,-50%) rotate(360deg);}}
+ 
+/* tech badges */
+.tech-badge{position:absolute;z-index:2;font-family:'Share Tech Mono',monospace;font-size:.68rem;color:var(--cyan);border:1px solid var(--border);background:rgba(0,20,40,0.82);padding:6px 14px;letter-spacing:.1em;backdrop-filter:blur(6px);clip-path:polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%);animation:floatBadge 4s ease-in-out infinite;}
+.tb1{top:14%;left:60%;animation-delay:0s;}
+.tb2{top:22%;right:1%;animation-delay:.8s;}
+.tb3{bottom:45%;left:62%;animation-delay:1.6s;}
+.tb4{bottom:20%;right:4%;animation-delay:2.4s;}
+@keyframes floatBadge{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+ 
+/* KG badge */
+.kg-badge-wrap{display:flex;flex-direction:column;align-items:flex-start;gap:10px;margin-bottom:22px;}
+.kg-circle{width:90px;height:90px;border-radius:50%;background:rgba(0,20,40,0.92);border:2px solid var(--cyan);box-shadow:0 0 30px rgba(0,212,255,0.4),inset 0 0 20px rgba(0,212,255,0.08);display:flex;align-items:center;justify-content:center;font-family:'Orbitron',monospace;font-size:1.6rem;font-weight:700;color:var(--cyan);position:relative;animation:pulseCircle 3s ease-in-out infinite;}
+.kg-circle::before{content:'';position:absolute;inset:-6px;border-radius:50%;border:1px solid rgba(0,212,255,0.25);animation:spinRing 6s linear infinite;}
+.kg-circle::after{content:'';position:absolute;inset:-12px;border-radius:50%;border:1px dashed rgba(0,212,255,0.1);animation:spinRing 10s linear infinite reverse;}
+@keyframes pulseCircle{0%,100%{box-shadow:0 0 30px rgba(0,212,255,0.4),inset 0 0 20px rgba(0,212,255,0.08);}50%{box-shadow:0 0 50px rgba(0,212,255,0.6),inset 0 0 30px rgba(0,212,255,0.15);}}
+.internship-badge{display:flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:.72rem;color:var(--green);letter-spacing:.12em;}
+.internship-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green);animation:blink 1.5s ease-in-out infinite;}
+ 
+.hero-content{position:relative;z-index:2;max-width:520px;}
+.hero-tag{font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--muted);letter-spacing:.18em;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.hero-tag::before{content:'';display:inline-block;width:24px;height:1px;background:var(--cyan);}
+h1.hero-name{font-family:'Orbitron',monospace;font-size:2.8rem;font-weight:900;color:#fff;line-height:1.05;letter-spacing:.02em;margin-bottom:10px;}
+h1.hero-name span{color:var(--cyan);}
+.hero-title{font-family:'Share Tech Mono',monospace;font-size:.78rem;color:var(--cyan);letter-spacing:.1em;margin-bottom:16px;opacity:.85;line-height:1.6;}
+.hero-desc{font-size:.9rem;color:var(--text);line-height:1.78;max-width:430px;font-weight:300;margin-bottom:26px;}
+.hero-links{display:flex;gap:12px;flex-wrap:wrap;}
+.hero-btn{display:flex;align-items:center;gap:8px;padding:10px 20px;border:1px solid var(--border);background:rgba(0,212,255,0.06);color:var(--cyan);font-family:'Share Tech Mono',monospace;font-size:.7rem;letter-spacing:.1em;text-decoration:none;transition:all .25s;clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);}
+.hero-btn:hover{background:rgba(0,212,255,0.15);border-color:var(--cyan);box-shadow:var(--glow);}
+.hero-btn svg{width:14px;height:14px;flex-shrink:0;}
+ 
+/* ─── COMMON ─── */
+section{padding:88px 40px;max-width:1100px;margin:0 auto;}
+.section-label{font-family:'Share Tech Mono',monospace;font-size:.68rem;color:var(--cyan);letter-spacing:.25em;margin-bottom:8px;display:flex;align-items:center;gap:10px;}
+.section-label::before{content:'';display:inline-block;width:16px;height:1px;background:var(--cyan);}
+h2.section-title{font-family:'Orbitron',monospace;font-size:1.75rem;font-weight:700;color:#fff;letter-spacing:.04em;margin-bottom:44px;position:relative;}
+h2.section-title::after{content:'';display:block;width:56px;height:2px;background:linear-gradient(90deg,var(--cyan),transparent);margin-top:10px;}
+.section-divider{width:100%;height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);}
+ 
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background-image:linear-gradient(rgba(0,212,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,0.025) 1px,transparent 1px);background-size:60px 60px;}
+ 
+/* ─── ABOUT ─── */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.about-card{background:var(--card);border:1px solid var(--border);padding:26px;transition:border-color .3s,box-shadow .3s;clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,0 100%);}
+.about-card:hover{border-color:var(--cyan);box-shadow:var(--glow2);}
+.about-card-icon{font-size:1.3rem;margin-bottom:12px;}
+.about-card h3{font-family:'Orbitron',monospace;font-size:.8rem;color:var(--cyan);letter-spacing:.1em;margin-bottom:10px;}
+.about-card p{font-size:.87rem;line-height:1.78;color:var(--text);font-weight:300;}
+ 
+/* ─── EDUCATION ─── */
+.edu-block{background:var(--card);border:1px solid var(--border);padding:30px 32px;display:flex;gap:22px;align-items:flex-start;clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,0 100%);transition:border-color .3s,box-shadow .3s;}
+.edu-block:hover{border-color:var(--cyan);box-shadow:var(--glow2);}
+.edu-icon{font-size:2rem;flex-shrink:0;margin-top:2px;}
+.edu-info h3{font-family:'Orbitron',monospace;font-size:1rem;color:#fff;letter-spacing:.04em;margin-bottom:4px;}
+.edu-info .edu-sub{font-family:'Share Tech Mono',monospace;font-size:.78rem;color:var(--cyan);letter-spacing:.1em;margin-bottom:14px;}
+.edu-info ul{list-style:none;display:flex;flex-direction:column;gap:8px;}
+.edu-info ul li{font-size:.87rem;color:var(--text);display:flex;align-items:flex-start;gap:10px;font-weight:300;line-height:1.6;}
+.edu-info ul li::before{content:'▶';font-size:.45rem;color:var(--cyan);flex-shrink:0;margin-top:6px;}
+ 
+/* ─── EXPERIENCE ─── */
+.exp-timeline{display:flex;flex-direction:column;position:relative;padding-left:28px;}
+.exp-timeline::before{content:'';position:absolute;left:0;top:12px;bottom:12px;width:1px;background:linear-gradient(180deg,var(--cyan),transparent);}
+.exp-item{position:relative;padding:0 0 32px 28px;}
+.exp-item::before{content:'';position:absolute;left:-6px;top:14px;width:12px;height:12px;border-radius:50%;background:var(--bg);border:2px solid var(--cyan);box-shadow:0 0 10px var(--cyan);}
+.exp-card{background:var(--card);border:1px solid var(--border);padding:22px 24px;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%);transition:border-color .3s,box-shadow .3s;}
+.exp-card:hover{border-color:var(--cyan);box-shadow:var(--glow2);}
+.exp-role{font-family:'Orbitron',monospace;font-size:.88rem;color:#fff;letter-spacing:.06em;margin-bottom:4px;}
+.exp-org{font-family:'Share Tech Mono',monospace;font-size:.8rem;color:var(--cyan);margin-bottom:5px;letter-spacing:.08em;}
+.exp-meta{font-size:.72rem;color:var(--muted);letter-spacing:.08em;margin-bottom:14px;font-family:'Share Tech Mono',monospace;}
+.exp-card ul{list-style:none;display:flex;flex-direction:column;gap:8px;}
+.exp-card ul li{font-size:.87rem;color:var(--text);display:flex;gap:10px;font-weight:300;line-height:1.6;}
+.exp-card ul li::before{content:'◆';font-size:.45rem;color:var(--cyan);flex-shrink:0;margin-top:6px;}
+ 
+/* ─── PROJECTS ─── */
+.projects-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;}
+.proj-card{background:var(--card);border:1px solid var(--border);padding:24px;display:flex;flex-direction:column;gap:13px;clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,0 100%);transition:border-color .3s,box-shadow .3s,transform .3s;}
+.proj-card:hover{border-color:var(--cyan);box-shadow:var(--glow);transform:translateY(-4px);}
+.proj-num{font-family:'Share Tech Mono',monospace;font-size:.66rem;color:var(--muted);letter-spacing:.15em;}
+.proj-title{font-family:'Orbitron',monospace;font-size:.88rem;color:#fff;letter-spacing:.03em;line-height:1.35;}
+.proj-tags{display:flex;gap:6px;flex-wrap:wrap;}
+.proj-tag{font-family:'Share Tech Mono',monospace;font-size:.62rem;color:var(--cyan);border:1px solid rgba(0,212,255,0.25);padding:3px 8px;letter-spacing:.06em;}
+.proj-desc{font-size:.85rem;color:var(--text);line-height:1.72;font-weight:300;flex:1;}
+.proj-links{display:flex;gap:10px;margin-top:auto;flex-wrap:wrap;}
+.proj-btn{display:flex;align-items:center;gap:6px;padding:8px 16px;border:1px solid var(--border);background:transparent;color:var(--text);font-family:'Share Tech Mono',monospace;font-size:.68rem;letter-spacing:.1em;text-decoration:none;transition:all .2s;clip-path:polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%);}
+.proj-btn:hover{border-color:var(--cyan);color:var(--cyan);background:rgba(0,212,255,0.08);}
+.proj-btn.primary{border-color:var(--cyan);color:var(--cyan);}
+ 
+/* ─── PUBLICATION ─── */
+.pub-card{background:var(--card);border:1px solid var(--border);padding:30px;display:grid;grid-template-columns:auto 1fr;gap:26px;clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,0 100%);transition:border-color .3s,box-shadow .3s;}
+.pub-card:hover{border-color:var(--cyan);box-shadow:var(--glow2);}
+.pub-icon-area{display:flex;flex-direction:column;align-items:center;gap:6px;}
+.pub-icon-box{width:54px;height:54px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.5rem;}
+.pub-year{font-family:'Share Tech Mono',monospace;font-size:.66rem;color:var(--muted);letter-spacing:.1em;}
+.pub-info h3{font-family:'Orbitron',monospace;font-size:.95rem;color:#fff;line-height:1.35;letter-spacing:.03em;margin-bottom:7px;}
+.pub-venue{font-family:'Share Tech Mono',monospace;font-size:.74rem;color:var(--cyan);letter-spacing:.1em;margin-bottom:12px;}
+.pub-desc{font-size:.87rem;color:var(--text);line-height:1.75;font-weight:300;margin-bottom:16px;}
+.pub-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;border:1px solid var(--cyan);background:rgba(0,212,255,0.06);color:var(--cyan);font-family:'Share Tech Mono',monospace;font-size:.7rem;letter-spacing:.1em;text-decoration:none;transition:all .25s;clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);}
+.pub-btn:hover{background:rgba(0,212,255,0.15);box-shadow:var(--glow);}
+ 
+/* ─── CERTS ─── */
+.certs-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+.cert-card{background:var(--card);border:1px solid var(--border);padding:22px;display:flex;gap:14px;align-items:flex-start;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%);transition:border-color .3s,box-shadow .3s;}
+.cert-card:hover{border-color:var(--cyan);box-shadow:var(--glow2);}
+.cert-icon{font-size:1.5rem;flex-shrink:0;margin-top:2px;}
+.cert-info h4{font-family:'Exo 2',sans-serif;font-size:.87rem;color:#fff;font-weight:600;line-height:1.35;margin-bottom:6px;}
+.cert-issuer{font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--cyan);letter-spacing:.08em;margin-bottom:4px;}
+.cert-date{font-size:.7rem;color:var(--muted);}
+ 
+/* ─── SKILLS ─── */
+.skills-wrap{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;}
+.skill-group h3{font-family:'Orbitron',monospace;font-size:.76rem;color:var(--cyan);letter-spacing:.15em;margin-bottom:18px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.skill-list{display:flex;flex-direction:column;gap:10px;}
+.skill-item{display:flex;align-items:center;gap:12px;}
+.skill-icon{width:32px;height:32px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;}
+.skill-name{font-size:.85rem;color:var(--text);font-weight:400;}
+ 
+/* ─── CONTACT ─── */
+.contact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.contact-item{background:var(--card);border:1px solid var(--border);padding:24px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;text-decoration:none;color:var(--text);transition:all .3s;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%);}
+.contact-item:hover{border-color:var(--cyan);box-shadow:var(--glow);transform:translateY(-4px);}
+.contact-label{font-family:'Orbitron',monospace;font-size:.72rem;letter-spacing:.12em;color:var(--cyan);}
+.contact-value{font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--muted);word-break:break-all;}
+ 
+footer{text-align:center;padding:26px 20px;border-top:1px solid var(--border);background:rgba(3,5,15,0.98);}
+footer p{font-family:'Share Tech Mono',monospace;font-size:.72rem;color:var(--muted);letter-spacing:.12em;}
+footer span{color:var(--cyan);}
+ 
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .65s ease,transform .65s ease;}
+.reveal.active{opacity:1;transform:none;}
+.reveal-delay-1{transition-delay:.1s;}
+.reveal-delay-2{transition-delay:.2s;}
+.reveal-delay-3{transition-delay:.3s;}
+ 
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--cyan2);border-radius:2px;}
+</style>
+</head>
+<body>
+ 
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+ 
+<!-- ══ PRELOADER ══ -->
+<div id="preloader">
+  <canvas id="star-canvas"></canvas>
+  <div class="preloader-inner">
+    <div class="orbital-wrap">
+      <div class="orbit-ring"><div class="orbit-dot"></div></div>
+      <div class="orbit-ring"><div class="orbit-dot"></div></div>
+      <div class="orbit-ring"><div class="orbit-dot"></div></div>
+      <div class="orbit-core"></div>
+    </div>
+    <div id="boot-msg">INITIALIZING SYSTEMS...<span class="cursor-blink">_</span></div>
+    <div class="progress-wrap">
+      <div class="progress-label"><span>BOOT SEQUENCE</span><span id="pct">0%</span></div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progress-fill">
+          <div class="comet-head"></div>
+        </div>
+      </div>
+    </div>
+    <button id="enter-btn" onclick="enterPortfolio()">◀ ENTER PORTFOLIO ▶</button>
+  </div>
+</div>
+ 
+<!-- ══ NAV ══ -->
+<nav id="navbar">
+  <div class="nav-logo">KG</div>
+  <div class="nav-links">
+    <a href="#about">ABOUT</a>
+    <a href="#education">EDUCATION</a>
+    <a href="#experience">EXPERIENCE</a>
+    <a href="#projects">PROJECTS</a>
+    <a href="#publication">PUBLICATION</a>
+    <a href="#certifications">CERTS</a>
+    <a href="#skills">SKILLS</a>
+    <a href="#contact">CONTACT</a>
+  </div>
+</nav>
+ 
+<!-- ══ HERO ══ -->
+<section id="hero" style="padding-top:80px;max-width:100%;margin:0;">
+  <canvas id="hero-canvas"></canvas>
+  <div class="scanline"></div>
+ 
+  <div class="tech-badge tb1">◈ MATLAB</div>
+  <div class="tech-badge tb2">◈ SOLIDWORKS</div>
+  <div class="tech-badge tb3">◈ PYTHON</div>
+  <div class="tech-badge tb4">◈ CONTROL SYSTEM</div>
+ 
+  <div class="planet-wrap">
+    <div class="planet-ring2"></div>
+    <div class="planet-ring"></div>
+    <div class="planet-sphere"></div>
+  </div>
+ 
+  <div class="hero-content">
+    <div class="kg-badge-wrap">
+      <div class="kg-circle">KG</div>
+      <div class="internship-badge">
+        <div class="internship-dot"></div>
+        OPEN TO INTERNSHIPS
+      </div>
+    </div>
+    <h1 class="hero-name">Kunal<br/><span>Gadhave</span></h1>
+    <div class="hero-title">MECHATRONICS ENGINEERING STUDENT<br/>CONTROL SYSTEMS | SPACE SYSTEMS ENGINEERING</div>
+    <p class="hero-desc">Focused on spacecraft modeling, control system analysis, and system dynamics. Building strong foundations in simulation-based engineering and robotics with a long-term interest in space systems and space research applications.</p>
+    <div class="hero-links">
+      <a class="hero-btn" href="https://github.com/kunaaal-g" target="_blank">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+        GITHUB
+      </a>
+      <a class="hero-btn" href="https://www.linkedin.com/in/kunal-gadhave-b68544356/" target="_blank">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        LINKEDIN
+      </a>
+      <a class="hero-btn" href="https://astromechlab.blogspot.com" target="_blank">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+        BLOG
+      </a>
+    </div>
+  </div>
+</section>
+ 
+<div class="section-divider"></div>
+ 
+<!-- ══ ABOUT ══ -->
+<section id="about">
+  <div class="section-label">01 / ABOUT</div>
+  <h2 class="section-title">Systems Thinker</h2>
+  <div class="about-grid">
+    <div class="about-card reveal"><div class="about-card-icon">⚙️</div><h3>ABOUT ME + CONTROL SYSTEMS</h3><p>I am a Mechatronics Engineering student focused on understanding how mechanical, electrical, and computational systems interact to form complete engineering solutions. My work centers around modeling dynamic systems, feedback control, and simulation-based analysis to study real-world engineering behavior.
+My primary technical focus lies in control systems and system dynamics, where I explore how mathematical models translate into stable and predictable system behavior. I use MATLAB and simulation tools to analyze system response, stability, and performance under varying conditions.</p></div>
+    <div class="about-card reveal reveal-delay-1"><div class="about-card-icon">🛰️</div><h3>SPACE SYSTEMS ENGINEERING INTEREST</h3><p>I am developing a long-term interest in space systems engineering, particularly spacecraft modeling and system-level design thinking. My focus is on building a strong foundation in physics-driven engineering and simulation-based analysis relevant to space applications.</p></div>
+    <div class="about-card reveal reveal-delay-2"><div class="about-card-icon">🤖</div><h3>ROBOTICS & EMBEDDED SYSTEMS</h3><p>Alongside control theory, I work on robotics-based systems involving sensors, automation logic, and embedded control concepts. My goal is to understand how real-world constraints shape robotic system design and behavior.</p></div>
+    <div class="about-card reveal reveal-delay-3"><div class="about-card-icon">📊</div><h3>ENGINEERING APPROACH</h3><p>I approach problems using structured analysis, simulation, and system-level thinking rather than isolated solutions. My goal is to connect theory with practical implementation through consistent experimentation and project-based learning.</p></div>
+  </div>
+</section>
+ 
+<div class="section-divider"></div>
+ 
+<!-- ══ EDUCATION ══ -->
+<section id="education">
+  <div class="section-label">02 / EDUCATION</div>
+  <h2 class="section-title">Academic Foundation</h2>
+  <div class="edu-block reveal">
+    <div class="edu-icon">🎓</div>
+    <div class="edu-info">
+      <h3>B.E. Mechatronics Engineering</h3>
+      <div class="edu-sub">Savitribai Phule Pune University</div>
+      <ul>
+        <li>SGPA: Above 9.0+(Top percentile performance)</li>
+        <li>Core Focus: Control Systems, Robotics, System Modeling</li>
+        <li>Strong foundation in interdisciplinary engineering spanning mechanical, electrical, and software systems</li>
+        <li>Actively engaged in project-based learning and applied system design</li>
+      </ul>
+    </div>
+  </div>
+</section>
+ 
+<div class="section-divider"></div>
+ 
+<!-- ══ EXPERIENCE ══ -->
+<section id="experience">
+  <div class="section-label">03 / EXPERIENCE</div>
+  <h2 class="section-title">Engineering Roles</h2>
+  <div class="exp-timeline">
+    <div class="exp-item reveal">
+      <div class="exp-card">
+        <div class="exp-role">Data Analytics Intern</div>
+        <div class="exp-org">Navyan</div>
+        <div class="exp-meta">APR 2026 – PRESENT &nbsp;·&nbsp; REMOTE</div>
+        <ul><li>Working on structured data cleaning and preprocessing for analytical workflows</li><li>Developing data pipelines for organized and efficient data handling</li><li>Creating analytical reports to support decision-making and insights generation</li><li>Applying structured data techniques for real-world datasets</li></ul>
+      </div>
+    </div>
+    <div class="exp-item reveal reveal-delay-1">
+      <div class="exp-card">
+        <div class="exp-role">President</div>
+        <div class="exp-org">AeroBotiX Club- Robotics & Drones Club</div>
+        <div class="exp-meta">2025 – PRESENT &nbsp;·&nbsp; ON-SITE</div>
+        <ul><li>Led development of “MiMi”, an autonomous robot using ultrasonic sensors for obstacle detection and maze navigation</li><li>Designed and supervised robotics workflows involving sensor integration and control logic</li><li>Managed interdisciplinary projects involving robotics, drone systems, and automation</li><li>Coordinated technical development across student engineering teams</li></ul>
+      </div>
+    </div>
+    <div class="exp-item reveal reveal-delay-2">
+      <div class="exp-card">
+        <div class="exp-role">Founder</div>
+        <div class="exp-org">AstroMechLab</div>
+        <div class="exp-meta">DEC 2025 – PRESENT &nbsp;·&nbsp; REMOTE</div>
+        <ul><li>Established a technical initiative focused on space systems and mechatronics education</li><li>Developed structured learning content covering control systems, spacecraft fundamentals, and system modeling</li><li>Built an engineering-focused platform for simplifying space science concepts</li><li>Promoted systems thinking approach in space and robotics engineering topics</li></ul>
+      </div>
+    </div>
+    <div class="exp-item reveal reveal-delay-3">
+      <div class="exp-card">
+        <div class="exp-role">Space Science Content Intern</div>
+        <div class="exp-org">MacroEdtech</div>
+        <div class="exp-meta">2025 – 2026 &nbsp;·&nbsp; REMOTE</div>
+        <ul><li>Developed structured educational content on space systems, orbital mechanics, and propulsion concepts</li><li>Simplified complex aerospace engineering topics into accessible learning modules</li><li>Supported technical content creation for space science education programs</li><li>Contributed to curriculum-style content focused on foundational aerospace engineering concepts</li></ul>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<div class="section-divider"></div>
+ 
+<!-- ══ PROJECTS ══ -->
+<section id="projects">
+  <div class="section-label">04 / PROJECTS</div>
+  <h2 class="section-title">Engineering Work</h2>
+  <div class="projects-grid">
+    <div class="proj-card reveal">
+      <div class="proj-num">PROJECT 01</div>
+      <div class="proj-title">Real-Time Crypto Analytics Dashboard</div>
+      <div class="proj-tags"><span class="proj-tag">PYTHON</span><span class="proj-tag">STREAMLIT</span><span class="proj-tag">DATA ANALYSIS</span></div>
+      <p class="proj-desc">Live cryptocurrency tracking dashboard with real-time price feeds, candlestick visualizations, and analytical indicators. Demonstrates applied data engineering and financial analysis pipelines.</p>
+      <div class="proj-links"><a class="proj-btn primary" href="https://github.com/kunaaal-g/crypto-analytics-dashboard.git" target="_blank">⌥ GITHUB</a><a class="proj-btn" href="https://crypto-analytics-dashboard-daaq6hveb7o2okb4kvtkjb.streamlit.app/" target="_blank">↗ LIVE</a></div>
+    </div>
+    <div class="proj-card reveal reveal-delay-1">
+      <div class="proj-num">PROJECT 02</div>
+      <div class="proj-title">Control System Stability — MATLAB Root Locus</div>
+      <div class="proj-tags"><span class="proj-tag">MATLAB</span><span class="proj-tag">CONTROL SYSTEMS</span><span class="proj-tag">STABILITY ANALYSIS</span></div>
+      <p class="proj-desc">Root locus analysis for closed-loop control system stability evaluation. Implements gain selection, pole-zero mapping, and performance boundary analysis using MATLAB's Control System Toolbox.</p>
+      <div class="proj-links"><a class="proj-btn primary" href="https://github.com/kunaaal-g/root-locus-stability-analysis.git" target="_blank">⌥ GITHUB</a></div>
+    </div>
+    <div class="proj-card reveal reveal-delay-2">
+      <div class="proj-num">PROJECT 03</div>
+      <div class="proj-title">Mars Surface Image Analysis</div>
+      <div class="proj-tags"><span class="proj-tag">PYTHON</span><span class="proj-tag">IMAGE PROCESSING</span><span class="proj-tag">SPACE SYSTEMS</span></div>
+      <p class="proj-desc">Automated analysis of Mars surface imagery using computer vision to classify terrain features. Explores geological pattern detection relevant to planetary science and rover navigation systems.</p>
+      <div class="proj-links"><a class="proj-btn primary" href="https://github.com/kunaaal-g/kunaaal-g-mars-surface-image-analysis-project.git" target="_blank">⌥ GITHUB</a></div>
+    </div>
+    <div class="proj-card reveal reveal-delay-3">
+      <div class="proj-num">PROJECT 04</div>
+      <div class="proj-title">JalSetu — Water Level Controller</div>
+      <div class="proj-tags"><span class="proj-tag">EMBEDDED SYSTEMS</span><span class="proj-tag">SENSORS</span><span class="proj-tag">AUTOMATION</span></div>
+      <p class="proj-desc">Automated water level monitoring and control using ultrasonic sensing with feedback-based pump actuation. Demonstrates closed-loop control applied to resource management infrastructure.</p>
+      <div class="proj-links"><a class="proj-btn primary" href="https://github.com/kunaaal-g/JalSetu-Water-Level-Controller.git" target="_blank">⌥ GITHUB</a></div>
+    </div>
+  </div>
+</section>
+ 
+<div class="section-divider"></div>
+ 
+<!-- ══ PUBLICATION ══ -->
+<section id="publication">
+  <div class="section-label">05 / PUBLICATION</div>
+  <h2 class="section-title">Research & Writing</h2>
+  <div class="pub-card reveal">
+    <div class="pub-icon-area"><div class="pub-icon-box">📄</div><div class="pub-year">JAN 2026</div></div>
+    <div class="pub-info">
+      <h3>Biorobotics in Space: Building Life-Inspired Machines for Extreme Worlds</h3>
+      <div class="pub-venue">NoRCEL Institute &nbsp;|&nbsp; The 3E Magazine</div>
+      <p class="pub-desc">Focuses on bio-inspired robotic design concepts for space environments, with emphasis on system adaptability, structural resilience, and motion behavior under microgravity conditions. Explores how biological mechanisms can influence engineering design for future planetary exploration and space robotics systems.</p>
+      <a class="pub-btn" href="https://www.flipbookpdf.net/web/site/b1020db5556d88f6972c8437a9e4e0b582eca839FBP37269801.pdf.html" target="_blank">↗ VIEW PUBLICATION</a>
+    </div>
+  </div>
+</section>
+ 
+<div class="section-divider"></div>
+ 
+<!-- ══ CERTIFICATIONS ══ -->
+<section id="certifications">
+  <div class="section-label">06 / CERTIFICATIONS</div>
+  <h2 class="section-title">Credentials</h2>
+  <div class="certs-grid">
+    <div class="cert-card reveal"><div class="cert-icon">🛰️</div><div class="cert-info"><h4>Understanding the Science behind Geological Hazards</h4><div class="cert-issuer">ISRO — IIRS</div><div class="cert-date">January 2026</div></div></div>
+    <div class="cert-card reveal reveal-delay-1"><div class="cert-icon">🌌</div><div class="cert-info"><h4>The Origin of the Universe</h4><div class="cert-issuer">ISRO — IIRS</div><div class="cert-date">January 2026</div></div></div>
+    <div class="cert-card reveal reveal-delay-2"><div class="cert-icon">⚡</div><div class="cert-info"><h4>MATLAB Onramp</h4><div class="cert-issuer">MathWorks</div><div class="cert-date">March 2026</div></div></div>
+    <div class="cert-card reveal reveal-delay-3"><div class="cert-icon">🔭</div><div class="cert-info"><h4>Research and Career Opportunities in Space Science</h4><div class="cert-issuer">ISRO — IIRS</div><div class="cert-date">December 2025</div></div></div>
+  </div>
+</section>
+ 
+<div class="section-divider"></div>
+ 
+<!-- ══ SKILLS ══ -->
+<section id="skills">
+  <div class="section-label">07 / SKILLS</div>
+  <h2 class="section-title">Technical Stack</h2>
+  <div class="skills-wrap">
+    <div class="skill-group reveal">
+      <h3>TECHNICAL TOOLS</h3>
+      <div class="skill-list">
+        <div class="skill-item"><div class="skill-icon">Ⓜ</div><span class="skill-name">MATLAB</span></div>
+        <div class="skill-item"><div class="skill-icon">🐍</div><span class="skill-name">Python</span></div>
+        <div class="skill-item"><div class="skill-icon">⚙️</div><span class="skill-name">SolidWorks</span></div>
+        <div class="skill-item"><div class="skill-icon">✏️</div><span class="skill-name">AutoCAD</span></div>
+      </div>
+    </div>
+    <div class="skill-group reveal reveal-delay-1">
+      <h3>ENGINEERING DOMAINS</h3>
+      <div class="skill-list">
+        <div class="skill-item"><div class="skill-icon">🔁</div><span class="skill-name">Control Systems</span></div>
+        <div class="skill-item"><div class="skill-icon">📈</div><span class="skill-name">System Modeling</span></div>
+        <div class="skill-item"><div class="skill-icon">📊</div><span class="skill-name">Data Analysis</span></div>
+        <div class="skill-item"><div class="skill-icon">🤖</div><span class="skill-name">Robotics & Automation</span></div>
+      </div>
+    </div>
+    <div class="skill-group reveal reveal-delay-2">
+      <h3>CORE COMPETENCIES</h3>
+      <div class="skill-list">
+        <div class="skill-item"><div class="skill-icon">👥</div><span class="skill-name">Leadership</span></div>
+        <div class="skill-item"><div class="skill-icon">🎤</div><span class="skill-name">Presentation Skills</span></div>
+        <div class="skill-item"><div class="skill-icon">📝</div><span class="skill-name">Technical Documentation</span></div>
+        <div class="skill-item"><div class="skill-icon">🧩</div><span class="skill-name">Systems Thinking</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<div class="section-divider"></div>
+ 
+<!-- ══ CONTACT ══ -->
+<section id="contact">
+  <div class="section-label">08 / CONTACT</div>
+  <h2 class="section-title">Get In Touch</h2>
+  <div class="contact-grid">
+    <a class="contact-item reveal" href="https://github.com/kunaaal-g" target="_blank">
+      <svg style="width:28px;height:28px;color:var(--cyan);" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+      <div class="contact-label">GITHUB</div>
+      <div class="contact-value">github.com/kunaaal-g</div>
+    </a>
+    <a class="contact-item reveal reveal-delay-1" href="https://www.linkedin.com/in/kunal-gadhave-b68544356/" target="_blank">
+      <svg style="width:28px;height:28px;color:var(--cyan);" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      <div class="contact-label">LINKEDIN</div>
+      <div class="contact-value">linkedin.com/in/kunal-gadhave-b68544356</div>
+    </a>
+    <a class="contact-item reveal reveal-delay-2" href="mailto:gadhavekunal14@gmail.com">
+      <svg style="width:28px;height:28px;color:var(--cyan);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+      <div class="contact-label">EMAIL</div>
+      <div class="contact-value">gadhavekunal14@gmail.com</div>
+    </a>
+  </div>
+</section>
+ 
+<!-- ══ FOOTER ══ -->
+<footer>
+  <p>Created by <span>Kunal Gadhave</span> &nbsp;·&nbsp; Mechatronics Engineering <span>2026</span></p>
+</footer>
+ 
+<script>
+// CURSOR
+const cursor = document.getElementById('cursor');
+const ring   = document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx+'px';cursor.style.top=my+'px';});
+function animRing(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animRing);}
+animRing();
+document.querySelectorAll('a,button').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{ring.style.width='46px';ring.style.height='46px';cursor.style.transform='translate(-50%,-50%) scale(1.5)';});
+  el.addEventListener('mouseleave',()=>{ring.style.width='32px';ring.style.height='32px';cursor.style.transform='translate(-50%,-50%) scale(1)';});
+});
+ 
+// PRELOADER STARFIELD
+(function(){
+  const c=document.getElementById('star-canvas');
+  const x=c.getContext('2d');
+  function resize(){c.width=window.innerWidth;c.height=window.innerHeight;}
+  resize();window.addEventListener('resize',resize);
+  const stars=Array.from({length:220},()=>({
+    x:Math.random()*window.innerWidth,
+    y:Math.random()*window.innerHeight,
+    r:Math.random()*1.4+.2,a:Math.random(),
+    da:(Math.random()-.5)*.009
+  }));
+  function draw(){
+    x.clearRect(0,0,c.width,c.height);
+    stars.forEach(s=>{
+      s.a=Math.max(.05,Math.min(.9,s.a+s.da));
+      if(s.a<=.05||s.a>=.9)s.da=-s.da;
+      x.beginPath();x.arc(s.x,s.y,s.r,0,Math.PI*2);
+      x.fillStyle=`rgba(180,220,255,${s.a})`;x.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+ 
+// BOOT SEQUENCE
+const msgs=['INITIALIZING SYSTEMS...','LOADING ENGINEERING MODULES...','CALIBRATING CONTROL PARAMETERS...','PREPARING INTERFACE...','LAUNCHING PORTFOLIO...'];
+const bootMsg=document.getElementById('boot-msg');
+const fillEl=document.getElementById('progress-fill');
+const pctEl=document.getElementById('pct');
+const enterBtn=document.getElementById('enter-btn');
+let pct=0;
+function setMsg(p){
+  let i=p<20?0:p<40?1:p<60?2:p<85?3:4;
+  bootMsg.innerHTML=msgs[i]+'<span class="cursor-blink">_</span>';
+}
+const timer=setInterval(()=>{
+  pct=Math.min(pct+(Math.random()*2.2+.5),100);
+  fillEl.style.width=pct+'%';
+  pctEl.textContent=Math.round(pct)+'%';
+  setMsg(pct);
+  if(pct>=100){
+    clearInterval(timer);
+    bootMsg.innerHTML='SYSTEMS READY — ALL MODULES ONLINE<span class="cursor-blink">_</span>';
+    setTimeout(()=>enterBtn.classList.add('visible'),500);
+  }
+},55);
+ 
+function enterPortfolio(){
+  document.getElementById('preloader').classList.add('fade-out');
+  setTimeout(()=>{
+    document.getElementById('preloader').style.display='none';
+    document.getElementById('navbar').classList.add('visible');
+    initHeroCanvas();
+  },850);
+}
+ 
+// HERO STARFIELD
+function initHeroCanvas(){
+  const c=document.getElementById('hero-canvas');
+  const ctx=c.getContext('2d');
+  function resize(){c.width=c.parentElement.offsetWidth;c.height=c.parentElement.offsetHeight;}
+  resize();window.addEventListener('resize',resize);
+  const stars=Array.from({length:260},()=>({
+    x:Math.random()*c.width,y:Math.random()*c.height,
+    r:Math.random()*1.1+.2,a:Math.random(),da:(Math.random()-.5)*.007
+  }));
+  function draw(){
+    ctx.clearRect(0,0,c.width,c.height);
+    // gradient bg
+    const g=ctx.createRadialGradient(c.width*.5,c.height*.5,0,c.width*.5,c.height*.5,c.width*.7);
+    g.addColorStop(0,'rgba(5,15,35,0.6)');g.addColorStop(1,'rgba(3,5,15,0)');
+    ctx.fillStyle=g;ctx.fillRect(0,0,c.width,c.height);
+    stars.forEach(s=>{
+      s.a=Math.max(.05,Math.min(.85,s.a+s.da));
+      if(s.a<=.05||s.a>=.85)s.da=-s.da;
+      ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(190,215,255,${s.a})`;ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+ 
+// SCROLL REVEAL
+const reveals=document.querySelectorAll('.reveal');
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('active');}),{threshold:.1});
+reveals.forEach(el=>obs.observe(el));
+ 
+// NAV HIGHLIGHT
+const sections=document.querySelectorAll('section[id]');
+const navLinks=document.querySelectorAll('.nav-links a');
+window.addEventListener('scroll',()=>{
+  let cur='';
+  sections.forEach(s=>{if(window.scrollY>=s.offsetTop-160)cur=s.id;});
+  navLinks.forEach(a=>{
+    a.classList.toggle('active',a.getAttribute('href')==='#'+cur);
+  });
+});
+</script>
+</body>
+</html>
+

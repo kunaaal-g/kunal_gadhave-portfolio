@@ -18,10 +18,10 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
 body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;overflow-x:hidden;cursor:none;}
- 
+
 #cursor{position:fixed;width:10px;height:10px;background:var(--cyan);border-radius:50%;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);mix-blend-mode:screen;transition:transform .1s;}
 #cursor-ring{position:fixed;width:32px;height:32px;border:1px solid rgba(0,212,255,0.5);border-radius:50%;pointer-events:none;z-index:99998;transform:translate(-50%,-50%);transition:transform .18s ease,width .2s,height .2s;}
- 
+
 /* ─── PRELOADER ─── */
 #preloader{
   position:fixed;inset:0;z-index:9999;
@@ -32,7 +32,7 @@ body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;overf
 #preloader.fade-out{opacity:0;visibility:hidden;}
 #star-canvas{position:absolute;inset:0;z-index:0;}
 .preloader-inner{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:26px;}
- 
+
 .orbital-wrap{position:relative;width:180px;height:180px;}
 .orbit-ring{position:absolute;top:50%;left:50%;border-radius:50%;border:1.5px solid transparent;transform:translate(-50%,-50%);animation:spinRing 3s linear infinite;}
 .orbit-ring:nth-child(1){width:180px;height:180px;border-color:rgba(0,212,255,0.6);animation-duration:4s;}
@@ -43,24 +43,24 @@ body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;overf
 .orbit-ring:nth-child(2) .orbit-dot{background:#00ff88;box-shadow:0 0 12px #00ff88;top:50%;left:-3.5px;transform:translateY(-50%);}
 .orbit-ring:nth-child(3) .orbit-dot{background:#00eeff;box-shadow:0 0 10px #00eeff;}
 .orbit-core{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:36px;height:36px;border-radius:50%;background:radial-gradient(circle,#00ffee 0%,#00a8cc 60%,transparent 100%);box-shadow:0 0 30px #00d4ff,0 0 60px rgba(0,212,255,0.4);animation:pulseCore 2s ease-in-out infinite;}
- 
+
 @keyframes spinRing{to{transform:translate(-50%,-50%) rotate(360deg);}}
 @keyframes pulseCore{0%,100%{box-shadow:0 0 30px #00d4ff,0 0 60px rgba(0,212,255,0.4);}50%{box-shadow:0 0 50px #00d4ff,0 0 100px rgba(0,212,255,0.6);}}
- 
+
 #boot-msg{font-family:'Share Tech Mono',monospace;font-size:.8rem;color:var(--cyan);letter-spacing:.12em;min-height:20px;text-shadow:0 0 10px var(--cyan);}
 .cursor-blink{animation:blink .7s step-end infinite;}
 @keyframes blink{50%{opacity:0;}}
- 
+
 .progress-wrap{width:280px;}
 .progress-label{font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--muted);letter-spacing:.1em;margin-bottom:8px;display:flex;justify-content:space-between;}
 .progress-track{width:100%;height:4px;background:rgba(0,212,255,0.1);border-radius:2px;position:relative;overflow:visible;}
 .progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--cyan2),var(--cyan),var(--cyan3));border-radius:2px;position:relative;transition:width .12s ease;}
 .comet-head{position:absolute;right:-4px;top:50%;transform:translateY(-50%);width:10px;height:10px;border-radius:50%;background:#fff;box-shadow:0 0 12px #00d4ff,0 0 24px #00d4ff,-14px 0 20px rgba(0,212,255,0.6);}
- 
+
 #enter-btn{margin-top:6px;padding:11px 36px;border:1px solid var(--cyan);background:transparent;color:var(--cyan);font-family:'Orbitron',monospace;font-size:.75rem;letter-spacing:.2em;cursor:pointer;transition:all .3s;opacity:0;pointer-events:none;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);}
 #enter-btn.visible{opacity:1;pointer-events:auto;}
 #enter-btn:hover{background:var(--cyan);color:#000;box-shadow:var(--glow);}
- 
+
 /* ─── NAV ─── */
 #navbar{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:14px 40px;background:rgba(3,5,15,0.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);transform:translateY(-100%);transition:transform .6s ease;}
 #navbar.visible{transform:translateY(0);}
@@ -68,27 +68,35 @@ body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;overf
 .nav-links{display:flex;gap:24px;flex-wrap:wrap;}
 .nav-links a{font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--muted);text-decoration:none;letter-spacing:.1em;transition:color .2s;}
 .nav-links a:hover,.nav-links a.active{color:var(--cyan);}
- 
+
 /* ─── HERO ─── */
-#hero{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:80px 40px 40px;}
+#hero{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:relative;
+  overflow:hidden;
+  padding:80px 60px 40px;
+}
 #hero-canvas{position:absolute;inset:0;z-index:0;width:100%;height:100%;}
+#threejs-canvas{position:absolute;
+  top:0;
+  left:50%;
+  width:50%;
+  height:100%;
+  z-index:1;
+  pointer-events:none;}
 .scanline{position:absolute;inset:0;pointer-events:none;z-index:3;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px);opacity:.35;}
- 
-/* planet */
-.planet-wrap{position:absolute;right:4%;top:50%;transform:translateY(-50%);width:340px;height:340px;z-index:1;}
-.planet-sphere{width:220px;height:220px;border-radius:50%;background:radial-gradient(ellipse at 30% 30%,#3a6fa0 0%,#1a3a60 40%,#0a1a30 70%,#050e1e 100%);box-shadow:inset -30px -30px 60px rgba(0,0,0,0.8),inset 10px 10px 40px rgba(0,150,255,0.2),0 0 60px rgba(0,100,200,0.15);position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);animation:rotatePlanet 20s linear infinite;}
-.planet-ring{position:absolute;top:50%;left:50%;width:320px;height:80px;transform:translate(-50%,-50%) rotateX(70deg);border-radius:50%;border:18px solid transparent;border-top:18px solid rgba(100,180,255,0.22);border-bottom:18px solid rgba(60,140,220,0.12);}
-.planet-ring2{position:absolute;top:50%;left:50%;width:365px;height:92px;transform:translate(-50%,-50%) rotateX(70deg);border-radius:50%;border:7px solid rgba(80,160,240,0.1);}
-@keyframes rotatePlanet{to{transform:translate(-50%,-50%) rotate(360deg);}}
- 
+
 /* tech badges */
 .tech-badge{position:absolute;z-index:2;font-family:'Share Tech Mono',monospace;font-size:.68rem;color:var(--cyan);border:1px solid var(--border);background:rgba(0,20,40,0.82);padding:6px 14px;letter-spacing:.1em;backdrop-filter:blur(6px);clip-path:polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%);animation:floatBadge 4s ease-in-out infinite;}
-.tb1{top:14%;left:60%;animation-delay:0s;}
-.tb2{top:22%;right:1%;animation-delay:.8s;}
-.tb3{bottom:45%;left:62%;animation-delay:1.6s;}
-.tb4{bottom:20%;right:4%;animation-delay:2.4s;}
+.tb1{top:14%;right:38%;animation-delay:0s;}
+.tb2{top:22%;right:8%;animation-delay:.8s;}
+.tb3{bottom:45%;right:50%;animation-delay:1.6s;}
+.tb4{bottom:20%;right:10%;animation-delay:2.4s;}
 @keyframes floatBadge{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
- 
+
 /* KG badge */
 .kg-badge-wrap{display:flex;flex-direction:column;align-items:flex-start;gap:10px;margin-bottom:22px;}
 .kg-circle{width:90px;height:90px;border-radius:50%;background:rgba(0,20,40,0.92);border:2px solid var(--cyan);box-shadow:0 0 30px rgba(0,212,255,0.4),inset 0 0 20px rgba(0,212,255,0.08);display:flex;align-items:center;justify-content:center;font-family:'Orbitron',monospace;font-size:1.6rem;font-weight:700;color:var(--cyan);position:relative;animation:pulseCircle 3s ease-in-out infinite;}
@@ -97,19 +105,36 @@ body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;overf
 @keyframes pulseCircle{0%,100%{box-shadow:0 0 30px rgba(0,212,255,0.4),inset 0 0 20px rgba(0,212,255,0.08);}50%{box-shadow:0 0 50px rgba(0,212,255,0.6),inset 0 0 30px rgba(0,212,255,0.15);}}
 .internship-badge{display:flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:.72rem;color:var(--green);letter-spacing:.12em;}
 .internship-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green);animation:blink 1.5s ease-in-out infinite;}
- 
-.hero-content{position:relative;z-index:2;max-width:520px;}
+
+.hero-content{
+  position:relative;
+  z-index:5;
+  width:80%;
+  max-width:520px;
+  text-align:left;
+  flex-shrink:0;
+}
 .hero-tag{font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--muted);letter-spacing:.18em;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
 .hero-tag::before{content:'';display:inline-block;width:24px;height:1px;background:var(--cyan);}
-h1.hero-name{font-family:'Orbitron',monospace;font-size:2.8rem;font-weight:900;color:#fff;line-height:1.05;letter-spacing:.02em;margin-bottom:10px;}
+h1.hero-name{font-family:'Orbitron',monospace;font-size:2.8rem;font-weight:900;color:#fff;line-height:1.05;letter-spacing:.02em;margin-bottom:10px;text-align:left;}
 h1.hero-name span{color:var(--cyan);}
-.hero-title{font-family:'Share Tech Mono',monospace;font-size:.78rem;color:var(--cyan);letter-spacing:.1em;margin-bottom:16px;opacity:.85;line-height:1.6;}
-.hero-desc{font-size:.9rem;color:var(--text);line-height:1.78;max-width:430px;font-weight:300;margin-bottom:26px;}
-.hero-links{display:flex;gap:12px;flex-wrap:wrap;}
+.hero-title{font-family:'Share Tech Mono',monospace;font-size:.78rem;color:var(--cyan);letter-spacing:.1em;margin-bottom:16px;opacity:.85;line-height:1.6;text-align:left;}
+.hero-desc{font-size:.9rem;color:var(--text);line-height:1.78;max-width:430px;font-weight:300;margin-bottom:26px;text-align:left;}
+.hero-links{display:flex;gap:12px;flex-wrap:wrap;justify-content:flex-start;}
 .hero-btn{display:flex;align-items:center;gap:8px;padding:10px 20px;border:1px solid var(--border);background:rgba(0,212,255,0.06);color:var(--cyan);font-family:'Share Tech Mono',monospace;font-size:.7rem;letter-spacing:.1em;text-decoration:none;transition:all .25s;clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);}
 .hero-btn:hover{background:rgba(0,212,255,0.15);border-color:var(--cyan);box-shadow:var(--glow);}
 .hero-btn svg{width:14px;height:14px;flex-shrink:0;}
- 
+
+/* Three.js visualization container */
+.hero-viz{
+  position:relative;
+  z-index:2;
+  width:400px;
+  height:400px;
+  flex-shrink:0;
+  pointer-events:none;
+}
+
 /* ─── COMMON ─── */
 section{padding:88px 40px;max-width:1100px;margin:0 auto;}
 .section-label{font-family:'Share Tech Mono',monospace;font-size:.68rem;color:var(--cyan);letter-spacing:.25em;margin-bottom:8px;display:flex;align-items:center;gap:10px;}
@@ -117,9 +142,9 @@ section{padding:88px 40px;max-width:1100px;margin:0 auto;}
 h2.section-title{font-family:'Orbitron',monospace;font-size:1.75rem;font-weight:700;color:#fff;letter-spacing:.04em;margin-bottom:44px;position:relative;}
 h2.section-title::after{content:'';display:block;width:56px;height:2px;background:linear-gradient(90deg,var(--cyan),transparent);margin-top:10px;}
 .section-divider{width:100%;height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);}
- 
+
 body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background-image:linear-gradient(rgba(0,212,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,0.025) 1px,transparent 1px);background-size:60px 60px;}
- 
+
 /* ─── ABOUT ─── */
 .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
 .about-card{background:var(--card);border:1px solid var(--border);padding:26px;transition:border-color .3s,box-shadow .3s;clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,0 100%);}
@@ -127,7 +152,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;ba
 .about-card-icon{font-size:1.3rem;margin-bottom:12px;}
 .about-card h3{font-family:'Orbitron',monospace;font-size:.8rem;color:var(--cyan);letter-spacing:.1em;margin-bottom:10px;}
 .about-card p{font-size:.87rem;line-height:1.78;color:var(--text);font-weight:300;}
- 
+
 /* ─── EDUCATION ─── */
 .edu-block{background:var(--card);border:1px solid var(--border);padding:30px 32px;display:flex;gap:22px;align-items:flex-start;clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,0 100%);transition:border-color .3s,box-shadow .3s;}
 .edu-block:hover{border-color:var(--cyan);box-shadow:var(--glow2);}
@@ -137,7 +162,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;ba
 .edu-info ul{list-style:none;display:flex;flex-direction:column;gap:8px;}
 .edu-info ul li{font-size:.87rem;color:var(--text);display:flex;align-items:flex-start;gap:10px;font-weight:300;line-height:1.6;}
 .edu-info ul li::before{content:'▶';font-size:.45rem;color:var(--cyan);flex-shrink:0;margin-top:6px;}
- 
+
 /* ─── EXPERIENCE ─── */
 .exp-timeline{display:flex;flex-direction:column;position:relative;padding-left:28px;}
 .exp-timeline::before{content:'';position:absolute;left:0;top:12px;bottom:12px;width:1px;background:linear-gradient(180deg,var(--cyan),transparent);}
@@ -151,7 +176,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;ba
 .exp-card ul{list-style:none;display:flex;flex-direction:column;gap:8px;}
 .exp-card ul li{font-size:.87rem;color:var(--text);display:flex;gap:10px;font-weight:300;line-height:1.6;}
 .exp-card ul li::before{content:'◆';font-size:.45rem;color:var(--cyan);flex-shrink:0;margin-top:6px;}
- 
+
 /* ─── PROJECTS ─── */
 .projects-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;}
 .proj-card{background:var(--card);border:1px solid var(--border);padding:24px;display:flex;flex-direction:column;gap:13px;clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,0 100%);transition:border-color .3s,box-shadow .3s,transform .3s;}
@@ -165,7 +190,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;ba
 .proj-btn{display:flex;align-items:center;gap:6px;padding:8px 16px;border:1px solid var(--border);background:transparent;color:var(--text);font-family:'Share Tech Mono',monospace;font-size:.68rem;letter-spacing:.1em;text-decoration:none;transition:all .2s;clip-path:polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%);}
 .proj-btn:hover{border-color:var(--cyan);color:var(--cyan);background:rgba(0,212,255,0.08);}
 .proj-btn.primary{border-color:var(--cyan);color:var(--cyan);}
- 
+
 /* ─── PUBLICATION ─── */
 .pub-card{background:var(--card);border:1px solid var(--border);padding:30px;display:grid;grid-template-columns:auto 1fr;gap:26px;clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,0 100%);transition:border-color .3s,box-shadow .3s;}
 .pub-card:hover{border-color:var(--cyan);box-shadow:var(--glow2);}
@@ -177,7 +202,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;ba
 .pub-desc{font-size:.87rem;color:var(--text);line-height:1.75;font-weight:300;margin-bottom:16px;}
 .pub-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;border:1px solid var(--cyan);background:rgba(0,212,255,0.06);color:var(--cyan);font-family:'Share Tech Mono',monospace;font-size:.7rem;letter-spacing:.1em;text-decoration:none;transition:all .25s;clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);}
 .pub-btn:hover{background:rgba(0,212,255,0.15);box-shadow:var(--glow);}
- 
+
 /* ─── CERTS ─── */
 .certs-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
 .cert-card{background:var(--card);border:1px solid var(--border);padding:22px;display:flex;gap:14px;align-items:flex-start;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%);transition:border-color .3s,box-shadow .3s;}
@@ -186,7 +211,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;ba
 .cert-info h4{font-family:'Exo 2',sans-serif;font-size:.87rem;color:#fff;font-weight:600;line-height:1.35;margin-bottom:6px;}
 .cert-issuer{font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--cyan);letter-spacing:.08em;margin-bottom:4px;}
 .cert-date{font-size:.7rem;color:var(--muted);}
- 
+
 /* ─── SKILLS ─── */
 .skills-wrap{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;}
 .skill-group h3{font-family:'Orbitron',monospace;font-size:.76rem;color:var(--cyan);letter-spacing:.15em;margin-bottom:18px;padding-bottom:8px;border-bottom:1px solid var(--border);}
@@ -194,34 +219,61 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;ba
 .skill-item{display:flex;align-items:center;gap:12px;}
 .skill-icon{width:32px;height:32px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;}
 .skill-name{font-size:.85rem;color:var(--text);font-weight:400;}
- 
+
 /* ─── CONTACT ─── */
 .contact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
 .contact-item{background:var(--card);border:1px solid var(--border);padding:24px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;text-decoration:none;color:var(--text);transition:all .3s;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%);}
 .contact-item:hover{border-color:var(--cyan);box-shadow:var(--glow);transform:translateY(-4px);}
 .contact-label{font-family:'Orbitron',monospace;font-size:.72rem;letter-spacing:.12em;color:var(--cyan);}
 .contact-value{font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--muted);word-break:break-all;}
- 
+
 footer{text-align:center;padding:26px 20px;border-top:1px solid var(--border);background:rgba(3,5,15,0.98);}
 footer p{font-family:'Share Tech Mono',monospace;font-size:.72rem;color:var(--muted);letter-spacing:.12em;}
 footer span{color:var(--cyan);}
- 
+
 .reveal{opacity:0;transform:translateY(28px);transition:opacity .65s ease,transform .65s ease;}
 .reveal.active{opacity:1;transform:none;}
 .reveal-delay-1{transition-delay:.1s;}
 .reveal-delay-2{transition-delay:.2s;}
 .reveal-delay-3{transition-delay:.3s;}
- 
+
 ::-webkit-scrollbar{width:4px;}
 ::-webkit-scrollbar-track{background:var(--bg);}
 ::-webkit-scrollbar-thumb{background:var(--cyan2);border-radius:2px;}
+
+/* Responsive */
+@media(max-width:900px){
+  #hero{
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    padding:100px 24px 60px;
+    text-align:center;
+  }
+  .hero-content{
+    text-align:center;
+    max-width:100%;
+    order:1;
+  }
+  h1.hero-name,.hero-title,.hero-desc{text-align:center;}
+  .hero-links{justify-content:center;}
+  .kg-badge-wrap{align-items:center;}
+  .hero-viz{
+    width:280px;
+    height:280px;
+    order:2;
+    margin-top:20px;
+  }
+  .tech-badge{display:none;}
+  .about-grid,.projects-grid,.certs-grid,.skills-wrap,.contact-grid{grid-template-columns:1fr;}
+}
 </style>
 </head>
 <body>
- 
+
 <div id="cursor"></div>
 <div id="cursor-ring"></div>
- 
+
 <!-- ══ PRELOADER ══ -->
 <div id="preloader">
   <canvas id="star-canvas"></canvas>
@@ -244,7 +296,7 @@ footer span{color:var(--cyan);}
     <button id="enter-btn" onclick="enterPortfolio()">◀ ENTER PORTFOLIO ▶</button>
   </div>
 </div>
- 
+
 <!-- ══ NAV ══ -->
 <nav id="navbar">
   <div class="nav-logo">KG</div>
@@ -259,23 +311,18 @@ footer span{color:var(--cyan);}
     <a href="#contact">CONTACT</a>
   </div>
 </nav>
- 
+
 <!-- ══ HERO ══ -->
 <section id="hero" style="padding-top:80px;max-width:100%;margin:0;">
   <canvas id="hero-canvas"></canvas>
   <div class="scanline"></div>
- 
+
   <div class="tech-badge tb1">◈ MATLAB</div>
   <div class="tech-badge tb2">◈ SOLIDWORKS</div>
   <div class="tech-badge tb3">◈ PYTHON</div>
   <div class="tech-badge tb4">◈ CONTROL SYSTEM</div>
- 
-  <div class="planet-wrap">
-    <div class="planet-ring2"></div>
-    <div class="planet-ring"></div>
-    <div class="planet-sphere"></div>
-  </div>
- 
+
+  <!-- LEFT: Text Content -->
   <div class="hero-content">
     <div class="kg-badge-wrap">
       <div class="kg-circle">KG</div>
@@ -302,25 +349,43 @@ footer span{color:var(--cyan);}
       </a>
     </div>
   </div>
+
+  <!-- RIGHT: Three.js Visualization placeholder (Three.js will render to #hero-canvas overlay) -->
+  <div class="hero-viz" id="hero-viz"></div>
 </section>
- 
+
 <div class="section-divider"></div>
- 
+
 <!-- ══ ABOUT ══ -->
 <section id="about">
   <div class="section-label">01 / ABOUT</div>
   <h2 class="section-title">Systems Thinker</h2>
   <div class="about-grid">
-    <div class="about-card reveal"><div class="about-card-icon">⚙️</div><h3>ABOUT ME + CONTROL SYSTEMS</h3><p>I am a Mechatronics Engineering student focused on understanding how mechanical, electrical, and computational systems interact to form complete engineering solutions. My work centers around modeling dynamic systems, feedback control, and simulation-based analysis to study real-world engineering behavior.
-My primary technical focus lies in control systems and system dynamics, where I explore how mathematical models translate into stable and predictable system behavior. I use MATLAB and simulation tools to analyze system response, stability, and performance under varying conditions.</p></div>
-    <div class="about-card reveal reveal-delay-1"><div class="about-card-icon">🛰️</div><h3>SPACE SYSTEMS ENGINEERING INTEREST</h3><p>I am developing a long-term interest in space systems engineering, particularly spacecraft modeling and system-level design thinking. My focus is on building a strong foundation in physics-driven engineering and simulation-based analysis relevant to space applications.</p></div>
-    <div class="about-card reveal reveal-delay-2"><div class="about-card-icon">🤖</div><h3>ROBOTICS & EMBEDDED SYSTEMS</h3><p>Alongside control theory, I work on robotics-based systems involving sensors, automation logic, and embedded control concepts. My goal is to understand how real-world constraints shape robotic system design and behavior.</p></div>
-    <div class="about-card reveal reveal-delay-3"><div class="about-card-icon">📊</div><h3>ENGINEERING APPROACH</h3><p>I approach problems using structured analysis, simulation, and system-level thinking rather than isolated solutions. My goal is to connect theory with practical implementation through consistent experimentation and project-based learning.</p></div>
+    <div class="about-card reveal">
+      <div class="about-card-icon">⚙️</div>
+      <h3>ABOUT ME</h3>
+      <p>I am a Mechatronics Engineering student driven by a strong interest in understanding how complex engineering systems behave and interact. I focus on breaking down real-world problems into structured components and analyzing them through a systems-level perspective.<br/><br/>My approach is centered on clarity, fundamentals, and continuous learning through hands-on engineering and simulation.</p>
+    </div>
+    <div class="about-card reveal reveal-delay-1">
+      <div class="about-card-icon">🔁</div>
+      <h3>CONTROL SYSTEMS & DYNAMICS</h3>
+      <p>My primary technical focus lies in control systems and system dynamics. I work on modeling dynamic systems, analyzing feedback behavior, and studying stability under varying conditions.<br/><br/>Using tools like MATLAB, I explore how mathematical models translate into predictable and stable real-world system behavior.</p>
+    </div>
+    <div class="about-card reveal reveal-delay-2">
+      <div class="about-card-icon">🛰️</div>
+      <h3>SPACE SYSTEMS ORIENTATION</h3>
+      <p>I am developing a focused interest in space systems engineering, including spacecraft behavior, orbital mechanics, and system-level design for extreme environments.<br/><br/>My learning is oriented toward understanding how engineering principles scale to complex mission-driven systems.</p>
+    </div>
+    <div class="about-card reveal reveal-delay-3">
+      <div class="about-card-icon">🤖</div>
+      <h3>ROBOTICS & DATA</h3>
+      <p>I work on robotics-based systems involving sensors, automation logic, and embedded control concepts, aiming to understand how real-world constraints shape robotic system design. I also apply structured data analysis techniques to engineering datasets, using Python to extract insights and support decision-making in technical workflows.</p>
+    </div>
   </div>
 </section>
- 
+
 <div class="section-divider"></div>
- 
+
 <!-- ══ EDUCATION ══ -->
 <section id="education">
   <div class="section-label">02 / EDUCATION</div>
@@ -339,9 +404,9 @@ My primary technical focus lies in control systems and system dynamics, where I 
     </div>
   </div>
 </section>
- 
+
 <div class="section-divider"></div>
- 
+
 <!-- ══ EXPERIENCE ══ -->
 <section id="experience">
   <div class="section-label">03 / EXPERIENCE</div>
@@ -360,7 +425,7 @@ My primary technical focus lies in control systems and system dynamics, where I 
         <div class="exp-role">President</div>
         <div class="exp-org">AeroBotiX Club- Robotics & Drones Club</div>
         <div class="exp-meta">2025 – PRESENT &nbsp;·&nbsp; ON-SITE</div>
-        <ul><li>Led development of “MiMi”, an autonomous robot using ultrasonic sensors for obstacle detection and maze navigation</li><li>Designed and supervised robotics workflows involving sensor integration and control logic</li><li>Managed interdisciplinary projects involving robotics, drone systems, and automation</li><li>Coordinated technical development across student engineering teams</li></ul>
+        <ul><li>Led development of "MiMi", an autonomous robot using ultrasonic sensors for obstacle detection and maze navigation</li><li>Designed and supervised robotics workflows involving sensor integration and control logic</li><li>Managed interdisciplinary projects involving robotics, drone systems, and automation</li><li>Coordinated technical development across student engineering teams</li></ul>
       </div>
     </div>
     <div class="exp-item reveal reveal-delay-2">
@@ -381,9 +446,9 @@ My primary technical focus lies in control systems and system dynamics, where I 
     </div>
   </div>
 </section>
- 
+
 <div class="section-divider"></div>
- 
+
 <!-- ══ PROJECTS ══ -->
 <section id="projects">
   <div class="section-label">04 / PROJECTS</div>
@@ -419,9 +484,9 @@ My primary technical focus lies in control systems and system dynamics, where I 
     </div>
   </div>
 </section>
- 
+
 <div class="section-divider"></div>
- 
+
 <!-- ══ PUBLICATION ══ -->
 <section id="publication">
   <div class="section-label">05 / PUBLICATION</div>
@@ -436,9 +501,9 @@ My primary technical focus lies in control systems and system dynamics, where I 
     </div>
   </div>
 </section>
- 
+
 <div class="section-divider"></div>
- 
+
 <!-- ══ CERTIFICATIONS ══ -->
 <section id="certifications">
   <div class="section-label">06 / CERTIFICATIONS</div>
@@ -450,9 +515,9 @@ My primary technical focus lies in control systems and system dynamics, where I 
     <div class="cert-card reveal reveal-delay-3"><div class="cert-icon">🔭</div><div class="cert-info"><h4>Research and Career Opportunities in Space Science</h4><div class="cert-issuer">ISRO — IIRS</div><div class="cert-date">December 2025</div></div></div>
   </div>
 </section>
- 
+
 <div class="section-divider"></div>
- 
+
 <!-- ══ SKILLS ══ -->
 <section id="skills">
   <div class="section-label">07 / SKILLS</div>
@@ -487,9 +552,9 @@ My primary technical focus lies in control systems and system dynamics, where I 
     </div>
   </div>
 </section>
- 
+
 <div class="section-divider"></div>
- 
+
 <!-- ══ CONTACT ══ -->
 <section id="contact">
   <div class="section-label">08 / CONTACT</div>
@@ -512,14 +577,17 @@ My primary technical focus lies in control systems and system dynamics, where I 
     </a>
   </div>
 </section>
- 
+
 <!-- ══ FOOTER ══ -->
 <footer>
   <p>Created by <span>Kunal Gadhave</span> &nbsp;·&nbsp; Mechatronics Engineering <span>2026</span></p>
 </footer>
- 
+
+<!-- Three.js CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
 <script>
-// CURSOR
+// ══ CURSOR ══
 const cursor = document.getElementById('cursor');
 const ring   = document.getElementById('cursor-ring');
 let mx=0,my=0,rx=0,ry=0;
@@ -530,8 +598,8 @@ document.querySelectorAll('a,button').forEach(el=>{
   el.addEventListener('mouseenter',()=>{ring.style.width='46px';ring.style.height='46px';cursor.style.transform='translate(-50%,-50%) scale(1.5)';});
   el.addEventListener('mouseleave',()=>{ring.style.width='32px';ring.style.height='32px';cursor.style.transform='translate(-50%,-50%) scale(1)';});
 });
- 
-// PRELOADER STARFIELD
+
+// ══ PRELOADER STARFIELD ══
 (function(){
   const c=document.getElementById('star-canvas');
   const x=c.getContext('2d');
@@ -555,8 +623,8 @@ document.querySelectorAll('a,button').forEach(el=>{
   }
   draw();
 })();
- 
-// BOOT SEQUENCE
+
+// ══ BOOT SEQUENCE ══
 const msgs=['INITIALIZING SYSTEMS...','LOADING ENGINEERING MODULES...','CALIBRATING CONTROL PARAMETERS...','PREPARING INTERFACE...','LAUNCHING PORTFOLIO...'];
 const bootMsg=document.getElementById('boot-msg');
 const fillEl=document.getElementById('progress-fill');
@@ -578,29 +646,29 @@ const timer=setInterval(()=>{
     setTimeout(()=>enterBtn.classList.add('visible'),500);
   }
 },55);
- 
+
 function enterPortfolio(){
   document.getElementById('preloader').classList.add('fade-out');
   setTimeout(()=>{
     document.getElementById('preloader').style.display='none';
     document.getElementById('navbar').classList.add('visible');
     initHeroCanvas();
+    initThreeJS();
   },850);
 }
- 
-// HERO STARFIELD
+
+// ══ HERO STARFIELD ══
 function initHeroCanvas(){
   const c=document.getElementById('hero-canvas');
   const ctx=c.getContext('2d');
   function resize(){c.width=c.parentElement.offsetWidth;c.height=c.parentElement.offsetHeight;}
   resize();window.addEventListener('resize',resize);
-  const stars=Array.from({length:260},()=>({
+  const stars=Array.from({length:180},()=>({
     x:Math.random()*c.width,y:Math.random()*c.height,
     r:Math.random()*1.1+.2,a:Math.random(),da:(Math.random()-.5)*.007
   }));
   function draw(){
     ctx.clearRect(0,0,c.width,c.height);
-    // gradient bg
     const g=ctx.createRadialGradient(c.width*.5,c.height*.5,0,c.width*.5,c.height*.5,c.width*.7);
     g.addColorStop(0,'rgba(5,15,35,0.6)');g.addColorStop(1,'rgba(3,5,15,0)');
     ctx.fillStyle=g;ctx.fillRect(0,0,c.width,c.height);
@@ -614,13 +682,204 @@ function initHeroCanvas(){
   }
   draw();
 }
- 
-// SCROLL REVEAL
+
+// ══ THREE.JS PLANET SYSTEM ══
+function initThreeJS(){
+  const heroSection = document.getElementById('hero');
+  const vizDiv = document.getElementById('hero-viz');
+
+  // Create a dedicated canvas for Three.js, overlaid on the right side
+  const threeCanvas = document.createElement('canvas');
+  threeCanvas.id = 'threejs-canvas';
+  threeCanvas.style.cssText = 'position:absolute;top:0;right:0;z-index:2;pointer-events:none;';
+  heroSection.appendChild(threeCanvas);
+
+  const isMobile = window.innerWidth < 900;
+  const W = isMobile ? 280 : 420;
+  const H = isMobile ? 280 : 480;
+
+  // Renderer
+  const renderer = new THREE.WebGLRenderer({canvas: threeCanvas, antialias:true, alpha:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(W, H);
+  renderer.setClearColor(0x000000, 0);
+  threeCanvas.style.width = W + 'px';
+  threeCanvas.style.height = H + 'px';
+
+  // Scene & Camera
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, W/H, 0.1, 100);
+  camera.position.set(0, 1.2, 6);
+  camera.lookAt(0, 0, 0);
+
+  // Lighting
+  const ambientLight = new THREE.AmbientLight(0x112233, 1.2);
+  scene.add(ambientLight);
+
+  const dirLight = new THREE.DirectionalLight(0x00d4ff, 1.4);
+  dirLight.position.set(4, 3, 4);
+  scene.add(dirLight);
+
+  const rimLight = new THREE.DirectionalLight(0x00ff88, 0.3);
+  rimLight.position.set(-3, -1, -3);
+  scene.add(rimLight);
+
+  // ── PLANET ──
+  const planetGeo = new THREE.IcosahedronGeometry(1.4, 2); // low-poly
+  const planetMat = new THREE.MeshPhongMaterial({
+    color: 0x0a2a50,
+    emissive: 0x001428,
+    specular: 0x00d4ff,
+    shininess: 18,
+    wireframe: false,
+    flatShading: true,
+  });
+  const planet = new THREE.Mesh(planetGeo, planetMat);
+  scene.add(planet);
+
+  // Wireframe overlay (subtle)
+  const wireMat = new THREE.MeshBasicMaterial({color:0x00d4ff, wireframe:true, transparent:true, opacity:0.06});
+  const wireframe = new THREE.Mesh(planetGeo, wireMat);
+  scene.add(wireframe);
+
+  // ── ASTEROID BELT ──
+  const asteroidCount = isMobile ? 60 : 120;
+  const asteroidGeo = new THREE.BufferGeometry();
+  const asteroidPositions = new Float32Array(asteroidCount * 3);
+  const asteroidAngles = new Float32Array(asteroidCount);
+  const asteroidRadii = new Float32Array(asteroidCount);
+  const asteroidSpeeds = new Float32Array(asteroidCount);
+
+  for(let i = 0; i < asteroidCount; i++){
+    const angle = Math.random() * Math.PI * 2;
+    const radius = 2.1 + Math.random() * 0.6;
+    const yOffset = (Math.random() - 0.5) * 0.15;
+    asteroidAngles[i] = angle;
+    asteroidRadii[i] = radius;
+    asteroidSpeeds[i] = 0.0004 + Math.random() * 0.0003;
+    asteroidPositions[i*3]   = Math.cos(angle) * radius;
+    asteroidPositions[i*3+1] = yOffset;
+    asteroidPositions[i*3+2] = Math.sin(angle) * radius;
+  }
+  asteroidGeo.setAttribute('position', new THREE.BufferAttribute(asteroidPositions, 3));
+
+  const asteroidMat = new THREE.PointsMaterial({
+    color: 0x4499cc,
+    size: 0.04,
+    transparent: true,
+    opacity: 0.7,
+    sizeAttenuation: true,
+  });
+  const asteroids = new THREE.Points(asteroidGeo, asteroidMat);
+  scene.add(asteroids);
+  asteroids.rotation.x = 0.18; // slight tilt
+
+  // ── SATELLITE ──
+  const satGroup = new THREE.Group();
+  scene.add(satGroup);
+
+  // Satellite body
+  const satBodyGeo = new THREE.BoxGeometry(0.12, 0.06, 0.06);
+  const satBodyMat = new THREE.MeshPhongMaterial({color:0xaaddff, emissive:0x004466, shininess:60});
+  const satBody = new THREE.Mesh(satBodyGeo, satBodyMat);
+  satGroup.add(satBody);
+
+  // Solar panels (flat boxes)
+  const panelGeo = new THREE.BoxGeometry(0.18, 0.01, 0.08);
+  const panelMat = new THREE.MeshPhongMaterial({color:0x00aaff, emissive:0x002244, shininess:80});
+  const panelL = new THREE.Mesh(panelGeo, panelMat);
+  panelL.position.set(-0.16, 0, 0);
+  const panelR = new THREE.Mesh(panelGeo, panelMat);
+  panelR.position.set(0.16, 0, 0);
+  satGroup.add(panelL);
+  satGroup.add(panelR);
+
+  // Satellite orbit parameters
+  const satOrbitRadius = 1.9;
+  const satOrbitSpeed  = 0.004;
+  let   satAngle       = 0;
+
+  // ── ORBIT RING (visual guide) ──
+  const orbitRingGeo = new THREE.RingGeometry(satOrbitRadius - 0.01, satOrbitRadius + 0.01, 64);
+  const orbitRingMat = new THREE.MeshBasicMaterial({color:0x00d4ff, transparent:true, opacity:0.12, side:THREE.DoubleSide});
+  const orbitRing = new THREE.Mesh(orbitRingGeo, orbitRingMat);
+  orbitRing.rotation.x = Math.PI / 2;
+  scene.add(orbitRing);
+
+  // ── MOUSE PARALLAX ──
+  let targetRotX = 0, targetRotY = 0;
+  let currentRotX = 0, currentRotY = 0;
+  document.addEventListener('mousemove', e => {
+    targetRotY = ((e.clientX / window.innerWidth) - 0.5) * 0.3;
+    targetRotX = ((e.clientY / window.innerHeight) - 0.5) * 0.2;
+  });
+
+  // ── ANIMATION ──
+  let frameId;
+  let isVisible = true;
+
+  document.addEventListener('visibilitychange', () => {
+    isVisible = !document.hidden;
+    if(isVisible) animate();
+  });
+
+  function animate(){
+    if(!isVisible) return;
+    frameId = requestAnimationFrame(animate);
+
+    // Smooth camera parallax
+    currentRotX += (targetRotX - currentRotX) * 0.04;
+    currentRotY += (targetRotY - currentRotY) * 0.04;
+    scene.rotation.x = currentRotX;
+    scene.rotation.y = currentRotY;
+
+    // Planet slow rotation
+    planet.rotation.y += 0.003;
+    wireframe.rotation.y += 0.003;
+
+    // Asteroid belt orbit
+    const pos = asteroidGeo.attributes.position.array;
+    for(let i = 0; i < asteroidCount; i++){
+      asteroidAngles[i] += asteroidSpeeds[i];
+      const r = asteroidRadii[i];
+      pos[i*3]   = Math.cos(asteroidAngles[i]) * r;
+      pos[i*3+2] = Math.sin(asteroidAngles[i]) * r;
+    }
+    asteroidGeo.attributes.position.needsUpdate = true;
+
+    // Satellite orbit
+    satAngle += satOrbitSpeed;
+    satGroup.position.set(
+      Math.cos(satAngle) * satOrbitRadius,
+      0,
+      Math.sin(satAngle) * satOrbitRadius
+    );
+    // Keep satellite facing direction of travel
+    satGroup.rotation.y = -satAngle + Math.PI / 2;
+
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  // ── RESIZE ──
+  window.addEventListener('resize', () => {
+    const mobile = window.innerWidth < 900;
+    const nW = mobile ? 280 : 420;
+    const nH = mobile ? 280 : 480;
+    renderer.setSize(nW, nH);
+    threeCanvas.style.width = nW + 'px';
+    threeCanvas.style.height = nH + 'px';
+    camera.aspect = nW / nH;
+    camera.updateProjectionMatrix();
+  });
+}
+
+// ══ SCROLL REVEAL ══
 const reveals=document.querySelectorAll('.reveal');
 const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('active');}),{threshold:.1});
 reveals.forEach(el=>obs.observe(el));
- 
-// NAV HIGHLIGHT
+
+// ══ NAV HIGHLIGHT ══
 const sections=document.querySelectorAll('section[id]');
 const navLinks=document.querySelectorAll('.nav-links a');
 window.addEventListener('scroll',()=>{
@@ -633,4 +892,3 @@ window.addEventListener('scroll',()=>{
 </script>
 </body>
 </html>
-
